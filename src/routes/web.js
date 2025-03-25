@@ -8,4 +8,13 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/login", (req, res) => {
+  res.render("login", { error: null });
+});
+
+
+router.get("/register", (req, res) => {
+  res.render("register", { error: null });
+});
+
 module.exports = router;
