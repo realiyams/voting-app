@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require("express-session");
 const sequelize = require("./config/database");
 const { initModels } = require("./models");
 
@@ -10,6 +11,23 @@ const routes = require("./src/routes/web");
 const authRoutes = require("./src/routes/auth");
 const protectedRoutes = require("./src/routes/protected");
 const app = express();
+
+app.use(
+  session({
+    secret: "super_secret_key",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+);
+
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  if (req.session.message) {
+    delete req.session.message;
+  }
+  next();
+});
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
