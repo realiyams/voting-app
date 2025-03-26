@@ -1,10 +1,13 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 const User = require("./User");
-const Option = require("./Option");
 
-const Vote = sequelize.define("Vote", {
-  userId: {
+const Poll = sequelize.define("Poll", {
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  createdBy: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -12,14 +15,6 @@ const Vote = sequelize.define("Vote", {
       key: "id",
     },
   },
-  optionId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Option,
-      key: "id",
-    },
-  },
 });
 
-module.exports = Vote;
+module.exports = Poll;

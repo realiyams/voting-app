@@ -1,5 +1,6 @@
 const express = require("express");
 const sequelize = require("./config/database");
+const { initModels } = require("./models");
 
 const cors = require("cors");
 const path = require("path");
@@ -8,9 +9,6 @@ require("dotenv").config();
 const routes = require("./src/routes/web");
 const authRoutes = require("./src/routes/auth");
 const protectedRoutes = require("./src/routes/protected");
-
-// const Vote = require("../models/Vote");
-
 const app = express();
 
 app.use(cors());
@@ -26,13 +24,13 @@ app.use("/protected", protectedRoutes);
 
 app.get("/test-db", async (req, res) => {
   try {
-    await sequelize.sync(); 
-    res.json({ message: "Database connected & synced!" });
+    await sequelize.authenticate(); // Hanya tes koneksi, tidak sync ulang
+    res.json({ message: "Database connected!" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-sequelize.sync().then(() => console.log("Database ready!"));
+initModels();
 
 module.exports = app;
