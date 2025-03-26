@@ -1,5 +1,6 @@
 const express = require("express");
 const session = require("express-session");
+const engine = require("ejs-locals");
 const sequelize = require("./config/database");
 const { initModels } = require("./models");
 
@@ -33,8 +34,10 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.engine("ejs", engine);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "./views"));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", routes);
 app.use("/auth", authRoutes);

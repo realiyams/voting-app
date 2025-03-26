@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %></title>
-  </head>
-  <body>
+<% layout('layout') %>
 
-    <% if (session.message) { %>
-      <div class="alert alert-<%= session.message.type %>">
-        <%= session.message.text %>
-      </div>
-    <% } %>
-
-    <h1><%= message %></h1>
-    <p>Silakan pilih opsi voting Anda.</p>
-  </body>
-</html>
+<h1><%= message %></h1>
+<p>Silakan pilih opsi voting Anda.</p>
