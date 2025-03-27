@@ -1,0 +1,21 @@
+<% layout('layout') %>
+
+<h1>Buat Polling Baru</h1>
+
+<% if (message) { %>
+<div class="alert alert-<%= message.type %>">
+  <%= message.text %>
+</div>
+<% } %>
+
+<form action="/new_poll" method="POST">
+  <label for="title">Pertanyaan:</label>
+  <input type="text" id="title" name="title" required />
+
+  <label for="options">Pilihan (pisahkan dengan koma):</label>
+  <input type="text" id="options" name="options" required />
+
+  <button type="submit">Buat Polling</button>
+</form>
+
+<a href="/">Kembali ke Beranda</a>

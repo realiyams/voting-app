@@ -61,7 +61,7 @@ exports.login = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 3600000, // 1 jam
+      maxAge: 3600000,
     });
 
     req.session.user = { id: user.id, username: user.username };
@@ -80,7 +80,7 @@ exports.logout = async (req, res) => {
   try {
     res.clearCookie("token");
     req.session.destroy();
-    res.redirect("/login");
+    res.redirect("/");
   } catch (error) {
     req.session.message = { type: "danger", text: "Gagal logout" };
     res.redirect("/");

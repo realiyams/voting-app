@@ -1,4 +1,39 @@
 <% layout('layout') %>
 
-<h1><%= message %></h1>
-<p>Silakan pilih opsi voting Anda.</p>
+<h1>Selamat Datang!</h1>
+<p>Silakan pilih opsi voting Anda atau tambahkan opsi sendiri.</p>
+
+<% if (polls.length > 0) { %>
+  <% polls.forEach(poll => { %>
+    <div class="poll">
+      <h3><%= poll.title %></h3>
+      <form action="/vote" method="POST">
+        <label>Pilih Opsi:</label>
+        <select name="optionId" id="option-<%= poll.id %>" onchange="clearCustomOption(<%= poll.id %>)" required>
+          <option value="">-- Pilih Opsi --</option>
+          <% poll.Options.forEach(option => { %>
+            <option value="<%= option.id %>"><%= option.text %></option>
+          <% }) %>
+        </select>
+
+        <p>Atau masukkan pilihan sendiri:</p>
+        <input type="text" name="customOption" id="customOption-<%= poll.id %>" oninput="clearSelect(<%= poll.id %>)" placeholder="Masukkan opsi sendiri..." />
+
+        <input type="hidden" name="pollId" value="<%= poll.id %>" />
+        <button type="submit">Vote</button>
+      </form>
+    </div>
+  <% }) %>
+<% } else { %>
+  <p>Tidak ada polling yang tersedia.</p>
+<% } %>
+
+<script>
+  function clearSelect(pollId) {
+    document.getElementById("option-" + pollId).value = "";
+  }
+
+  function clearCustomOption(pollId) {
+    document.getElementById("customOption-" + pollId).value = "";
+  }
+</script>
