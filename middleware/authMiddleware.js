@@ -17,6 +17,8 @@ const SECRET_KEY = "super_secret_key";
 //   }
 // };
 
+
+
 // SESSION BASED
 
 const authMiddleware = (req, res, next) => {

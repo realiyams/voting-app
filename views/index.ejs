@@ -7,6 +7,7 @@
   <% polls.forEach(poll => { %>
     <div class="poll">
       <h3><%= poll.title %></h3>
+      <p><em>Dibuat oleh: <%= poll.User?.username || "Tidak diketahui" %></em></p>
       <form action="/vote" method="POST">
         <label>Pilih Opsi:</label>
         <select name="optionId" id="option-<%= poll.id %>" onchange="clearCustomOption(<%= poll.id %>)" required>

@@ -1,5 +1,8 @@
 const Poll = require("../../models/Poll");
 const Option = require("../../models/Option");
+const Vote = require("../../models/Vote");
+
+const { Sequelize } = require("sequelize");
 
 exports.createPoll = async (req, res) => {
   try {
@@ -22,7 +25,7 @@ exports.createPoll = async (req, res) => {
 
     const poll = await Poll.create({
       title,
-      createdBy: req.session.user.id, 
+      createdBy: req.session.user.id,
     });
 
     const optionPromises = optionsArray.map(text => Option.create({ text, pollId: poll.id }));
@@ -41,14 +44,32 @@ exports.createPoll = async (req, res) => {
 // 🔹 Menampilkan polling yang dibuat oleh user yang sedang login
 exports.myPoll = async (req, res) => {
   try {
-    const userId = req.session.user.id; // Mengambil ID user dari session
+    const userId = req.session.user.id;
 
     const polls = await Poll.findAll({
       where: { createdBy: userId },
-      include: [{ model: Option }],
+      include: [
+        {
+          model: Option,
+          include: [
+            {
+              model: Vote,
+              attributes: ['id'], // Ambil id untuk hitung jumlah
+            }
+          ]
+        }
+      ],
+      order: [['createdAt', 'DESC']]
     });
 
-    res.render("myPoll", { title: "Polling Saya", polls });
+    // Hitung jumlah vote per option
+    polls.forEach(poll => {
+      poll.Options.forEach(option => {
+        option.dataValues.voteCount = option.Votes.length;
+      });
+    });
+
+    res.render("myPoll", { title: "Polling Saya", polls, error: null, message: null });
   } catch (error) {
     console.error(error);
     req.session.message = { type: "danger", text: "Gagal mengambil polling Anda." };
@@ -71,7 +92,7 @@ exports.getPollById = async (req, res) => {
       return res.redirect("/");
     }
 
-    res.render("pollDetail", { title: poll.title, poll });
+    res.render("pollDetail", { title: poll.title, poll, error: null, message: null });
   } catch (error) {
     console.error(error);
     req.session.message = { type: "danger", text: "Gagal mengambil polling." };

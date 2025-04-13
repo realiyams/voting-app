@@ -1,0 +1,32 @@
+<% layout('layout') %>
+
+<h1><%= title %></h1>
+
+<% if (poll.Options && poll.Options.length > 0) { %>
+  <form action="/vote" method="POST">
+    <p><strong>Pilih salah satu opsi:</strong></p>
+    <% poll.Options.forEach(option => { %>
+      <div>
+        <input type="radio" name="optionId" id="option-<%= option.id %>" value="<%= option.id %>" required />
+        <label for="option-<%= option.id %>"><%= option.text %></label>
+      </div>
+    <% }) %>
+
+    <p>Atau masukkan pilihan sendiri:</p>
+    <input type="text" name="customOption" placeholder="Opsi lainnya..." oninput="clearRadio()" />
+
+    <input type="hidden" name="pollId" value="<%= poll.id %>" />
+    <button type="submit">Vote</button>
+  </form>
+<% } else { %>
+  <p>Tidak ada opsi untuk polling ini.</p>
+<% } %>
+
+<a href="/">Kembali ke Beranda</a>
+
+<script>
+  function clearRadio() {
+    const radios = document.querySelectorAll('input[type="radio"]');
+    radios.forEach(r => r.checked = false);
+  }
+</script>

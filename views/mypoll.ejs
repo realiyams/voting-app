@@ -1,0 +1,31 @@
+<% layout('layout') %>
+
+<h1>
+  <%= title %>
+</h1>
+
+<% if (polls.length===0) { %>
+  <p>Anda belum membuat polling apa pun.</p>
+<% } else { %>
+
+  <% polls.forEach(poll=> { %>
+    <div class="poll-card">
+      <h2>
+        <%= poll.title %>
+      </h2>
+      <ul>
+        <% poll.Options.forEach(option=> { %>
+          <li>
+            <%= option.text %> -
+              <%= option.dataValues.voteCount || 0 %> suara
+          </li>
+        <% }) %>
+      </ul>
+      <p>Dibuat pada: <%= new Date(poll.createdAt).toLocaleDateString("id-ID") %>
+      </p>
+      <p><a href="/poll/<%= poll.id %>">Lihat Polling</a></p>
+    </div>
+  <% }) %>
+<% } %>
+
+<a href="/">Kembali ke Beranda</a>

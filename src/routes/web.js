@@ -5,16 +5,20 @@ const authMiddleware = require("../../middleware/authMiddleware");
 const { createPoll, myPoll, getPollById } = require("../controllers/pollController");
 const Poll = require("../../models/Poll");
 const Option = require("../../models/Option");
+const User = require("../../models/User")
 
 router.get("/", async (req, res) => {
   try {
-    // Ambil semua polling beserta opsi-opsinya
     const polls = await Poll.findAll({
-      include: Option, // Menghubungkan polling dengan opsi
+      include: [
+        { model: Option },
+        { model: User, attributes: ["username"] } // Ambil hanya username dari User
+      ]
     });
 
     const message = req.session.message;
     req.session.message = null;
+
     res.render("index", { title: "Halaman Utama", message, polls });
   } catch (error) {
     console.error(error);
@@ -35,5 +39,9 @@ router.get("/new_poll", authMiddleware, (req, res) => {
 });
 
 router.post("/new_poll", authMiddleware, createPoll);
+
+router.get("/myPolls", authMiddleware, myPoll);
+
+router.get("/poll/:id", getPollById);
 
 module.exports = router;
