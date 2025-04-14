@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../../middleware/authMiddleware");
 
-const { createPoll, myPoll, getPollById } = require("../controllers/pollController");
+const { createPoll, myPoll, getPollById, deletePoll } = require("../controllers/pollController");
 const Poll = require("../../models/Poll");
 const Option = require("../../models/Option");
 const User = require("../../models/User")
@@ -43,5 +43,7 @@ router.post("/new_poll", authMiddleware, createPoll);
 router.get("/myPolls", authMiddleware, myPoll);
 
 router.get("/poll/:id", getPollById);
+
+router.post('/poll/:id/delete', authMiddleware, deletePoll);
 
 module.exports = router;

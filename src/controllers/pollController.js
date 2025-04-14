@@ -99,3 +99,32 @@ exports.getPollById = async (req, res) => {
     res.redirect("/");
   }
 };
+
+// 🔹 Menghapus polling berdasarkan ID
+exports.deletePoll = async (req, res) => {
+  const pollId = req.params.id;
+
+  try {
+    // Hapus semua opsi terkait terlebih dahulu
+    await Option.destroy({ where: { pollId } });
+
+    // Hapus polling-nya
+    await Poll.destroy({ where: { id: pollId } });
+
+    req.session.message = {
+      type: 'success',
+      text: 'Polling berhasil dihapus.'
+    };
+
+    res.redirect('/mypolls');
+  } catch (error) {
+    console.error(error);
+    req.session.message = {
+      type: 'danger',
+      text: 'Gagal menghapus polling.'
+    };
+
+    res.redirect('/mypolls');
+  }
+};
+

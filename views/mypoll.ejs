@@ -24,6 +24,10 @@
       <p>Dibuat pada: <%= new Date(poll.createdAt).toLocaleDateString("id-ID") %>
       </p>
       <p><a href="/poll/<%= poll.id %>">Lihat Polling</a></p>
+
+      <form action="/poll/<%= poll.id %>/delete" method="POST" onsubmit="return confirm('Yakin ingin menghapus polling ini?')">
+        <button type="submit">🗑 Hapus</button>
+      </form>
     </div>
   <% }) %>
 <% } %>
