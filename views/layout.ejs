@@ -9,33 +9,27 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
-    <header>
-      <nav>
-        <ul>
-          <li><a href="/">Home</a></li>
-
+    <header class="bg-white shadow">
+      <nav class="container mx-auto px-4 py-4">
+        <ul class="flex space-x-4 items-center justify-end">
+          <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
+    
           <% if (user) { %>
-          <li><a href="/mypolls">My Polls</a></li>
-          <li><a href="/new_poll">New Poll</a></li>
+          <li><a href="/mypolls" class="text-blue-600 hover:underline">My Polls</a></li>
+          <li><a href="/new_poll" class="text-blue-600 hover:underline">New Poll</a></li>
           <li>
-            <form action="/auth/logout" method="POST" style="display: inline">
+            <form action="/auth/logout" method="POST">
               <button
                 type="submit"
-                style="
-                  border: none;
-                  background: none;
-                  color: blue;
-                  cursor: pointer;
-                "
+                class="text-blue-600 hover:underline bg-transparent border-none cursor-pointer"
               >
                 Logout
               </button>
             </form>
           </li>
-
           <% } else { %>
-          <li><a href="/login">Login</a></li>
-          <li><a href="/register">Register</a></li>
+          <li><a href="/login" class="text-blue-600 hover:underline">Login</a></li>
+          <li><a href="/register" class="text-blue-600 hover:underline">Register</a></li>
           <% } %>
         </ul>
       </nav>

@@ -1,21 +1,52 @@
 <% layout('layout') %>
 
-<h1>Buat Polling Baru</h1>
+<div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+  <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">Buat Polling Baru</h1>
 
-<% if (message) { %>
-<div class="alert alert-<%= message.type %>">
-  <%= message.text %>
+  <% if (message) { %>
+    <div class="mb-4 p-3 rounded bg-<%= message.type === 'error' ? 'red' : 'green' %>-100 text-<%= message.type === 'error' ? 'red' : 'green' %>-700">
+      <%= message.text %>
+    </div>
+  <% } %>
+
+  <form action="/new_poll" method="POST" class="space-y-4">
+    <div>
+      <label for="title" class="block text-gray-700 font-medium">Pertanyaan:</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        required
+        class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-400"
+      />
+    </div>
+
+    <div>
+      <label for="options" class="block text-gray-700 font-medium">Pilihan (pisahkan dengan koma):</label>
+      <input
+        type="text"
+        id="options"
+        name="options"
+        required
+        placeholder="Contoh: Ya, Tidak, Mungkin"
+        class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-400"
+      />
+    </div>
+
+    <button
+      type="submit"
+      class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+    >
+      Buat Polling
+    </button>
+  </form>
+
+  <div class="mt-6 text-center">
+    <a
+      href="/"
+      class="text-blue-600 hover:underline"
+    >
+      ⬅ Kembali ke Beranda
+    </a>
+  </div>
 </div>
-<% } %>
-
-<form action="/new_poll" method="POST">
-  <label for="title">Pertanyaan:</label>
-  <input type="text" id="title" name="title" required />
-
-  <label for="options">Pilihan (pisahkan dengan koma):</label>
-  <input type="text" id="options" name="options" required />
-
-  <button type="submit">Buat Polling</button>
-</form>
-
-<a href="/">Kembali ke Beranda</a>

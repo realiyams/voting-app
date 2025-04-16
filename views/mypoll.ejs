@@ -1,35 +1,57 @@
 <% layout('layout') %>
 
-<h1>
-  <%= title %>
-</h1>
+<div class="max-w-4xl mx-auto mt-10 p-4">
+  <h1 class="text-3xl font-bold mb-6 text-center"><%= title %></h1>
 
-<% if (polls.length===0) { %>
-  <p>Anda belum membuat polling apa pun.</p>
-<% } else { %>
+  <% if (polls.length === 0) { %>
+    <p class="text-center text-gray-600">Anda belum membuat polling apa pun.</p>
+  <% } else { %>
+    <div class="space-y-6">
+      <% polls.forEach(poll => { %>
+        <div class="bg-white shadow-md rounded-lg p-6">
+          <h2 class="text-xl font-semibold mb-2 text-blue-700"><%= poll.title %></h2>
 
-  <% polls.forEach(poll=> { %>
-    <div class="poll-card">
-      <h2>
-        <%= poll.title %>
-      </h2>
-      <ul>
-        <% poll.Options.forEach(option=> { %>
-          <li>
-            <%= option.text %> -
-              <%= option.dataValues.voteCount || 0 %> suara
-          </li>
-        <% }) %>
-      </ul>
-      <p>Dibuat pada: <%= new Date(poll.createdAt).toLocaleDateString("id-ID") %>
-      </p>
-      <p><a href="/poll/<%= poll.id %>">Lihat Polling</a></p>
+          <ul class="list-disc pl-5 mb-3 text-gray-700">
+            <% poll.Options.forEach(option => { %>
+              <li>
+                <span class="font-medium"><%= option.text %></span> -
+                <span><%= option.dataValues.voteCount || 0 %> suara</span>
+              </li>
+            <% }) %>
+          </ul>
 
-      <form action="/poll/<%= poll.id %>/delete" method="POST" onsubmit="return confirm('Yakin ingin menghapus polling ini?')">
-        <button type="submit">🗑 Hapus</button>
-      </form>
+          <p class="text-sm text-gray-500 mb-2">
+            Dibuat pada: <%= new Date(poll.createdAt).toLocaleDateString("id-ID") %>
+          </p>
+
+          <div class="flex items-center justify-between mt-4">
+            <a href="/poll/<%= poll.id %>" class="text-blue-600 hover:underline">
+              🔍 Lihat Polling
+            </a>
+            <form
+              action="/poll/<%= poll.id %>/delete"
+              method="POST"
+              onsubmit="return confirm('Yakin ingin menghapus polling ini?')"
+            >
+              <button
+                type="submit"
+                class="text-red-600 hover:text-red-800 transition font-medium"
+              >
+                🗑 Hapus
+              </button>
+            </form>
+          </div>
+        </div>
+      <% }) %>
     </div>
-  <% }) %>
-<% } %>
+  <% } %>
 
-<a href="/">Kembali ke Beranda</a>
+  <div class="mt-8 text-center">
+    <a
+      href="/"
+      class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+    >
+      ⬅ Kembali ke Beranda
+    </a>
+  </div>
+</div>

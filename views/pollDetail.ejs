@@ -1,28 +1,54 @@
 <% layout('layout') %>
 
-<h1><%= title %></h1>
+<div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+  <h1 class="text-2xl font-bold text-blue-700 mb-6"><%= title %></h1>
 
-<% if (poll.Options && poll.Options.length > 0) { %>
-  <form action="/vote" method="POST">
-    <p><strong>Pilih salah satu opsi:</strong></p>
-    <% poll.Options.forEach(option => { %>
+  <% if (poll.Options && poll.Options.length > 0) { %>
+    <form action="/vote" method="POST" class="space-y-4">
+
+      <p class="font-medium text-gray-800">Pilih salah satu opsi:</p>
+      <% poll.Options.forEach(option => { %>
+        <div class="flex items-center space-x-2">
+          <input
+            type="radio"
+            name="optionId"
+            id="option-<%= option.id %>"
+            value="<%= option.id %>"
+            required
+            class="text-blue-600 focus:ring-blue-500"
+          />
+          <label for="option-<%= option.id %>" class="text-gray-700"><%= option.text %></label>
+        </div>
+      <% }) %>
+
       <div>
-        <input type="radio" name="optionId" id="option-<%= option.id %>" value="<%= option.id %>" required />
-        <label for="option-<%= option.id %>"><%= option.text %></label>
+        <p class="mt-4 text-gray-800">Atau masukkan pilihan sendiri:</p>
+        <input
+          type="text"
+          name="customOption"
+          placeholder="Opsi lainnya..."
+          oninput="clearRadio()"
+          class="w-full border border-gray-300 mt-1 px-3 py-2 rounded focus:outline-none focus:ring focus:border-blue-400"
+        />
       </div>
-    <% }) %>
 
-    <p>Atau masukkan pilihan sendiri:</p>
-    <input type="text" name="customOption" placeholder="Opsi lainnya..." oninput="clearRadio()" />
+      <input type="hidden" name="pollId" value="<%= poll.id %>" />
 
-    <input type="hidden" name="pollId" value="<%= poll.id %>" />
-    <button type="submit">Vote</button>
-  </form>
-<% } else { %>
-  <p>Tidak ada opsi untuk polling ini.</p>
-<% } %>
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+      >
+        Vote
+      </button>
+    </form>
+  <% } else { %>
+    <p class="text-red-600 font-semibold">Tidak ada opsi untuk polling ini.</p>
+  <% } %>
 
-<a href="/">Kembali ke Beranda</a>
+  <div class="mt-6 text-center">
+    <a href="/" class="text-blue-600 hover:underline">⬅ Kembali ke Beranda</a>
+  </div>
+</div>
 
 <script>
   function clearRadio() {
