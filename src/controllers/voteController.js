@@ -4,25 +4,46 @@ const Poll = require("../../models/Poll");
 
 exports.castVote = async (req, res) => {
   try {
-    const { pollId, optionId } = req.body;
+    const { pollId, optionId, customOption } = req.body;
     const userId = req.session.user ? req.session.user.id : null;
-    const sessionId = req.session.id; // Gunakan session ID untuk vote anonim
+    const sessionId = req.session.id;
 
-    // Cek apakah polling & opsi valid
-    const option = await Option.findOne({
-      where: { id: optionId, pollId },
-    });
+    if (!pollId) {
+      req.session.message = { type: "danger", text: "Polling tidak ditemukan." };
+      return res.redirect("/");
+    }
 
-    if (!option) {
-      req.session.message = { type: "danger", text: "Pilihan tidak valid." };
+    let selectedOptionId;
+
+    // Jika user mengisi customOption
+    if (customOption && customOption.trim() !== "") {
+      const newOption = await Option.create({
+        text: customOption.trim(),
+        pollId,
+      });
+      selectedOptionId = newOption.id;
+    } else if (optionId) {
+      // Validasi apakah optionId valid untuk polling ini
+      const option = await Option.findOne({
+        where: { id: optionId, pollId },
+      });
+
+      if (!option) {
+        req.session.message = { type: "danger", text: "Pilihan tidak valid." };
+        return res.redirect(`/poll/${pollId}`);
+      }
+
+      selectedOptionId = option.id;
+    } else {
+      req.session.message = { type: "danger", text: "Silakan pilih atau masukkan opsi." };
       return res.redirect(`/poll/${pollId}`);
     }
 
-    // Cek apakah user/session sudah memilih opsi dalam polling ini
+    // Cek apakah user/session sudah pernah vote untuk polling ini
     const existingVote = await Vote.findOne({
       where: userId
-        ? { userId, optionId }
-        : { sessionId, optionId }, // Cek berdasarkan user ID atau session ID
+        ? { userId, pollId }
+        : { sessionId, pollId },
     });
 
     if (existingVote) {
@@ -31,7 +52,12 @@ exports.castVote = async (req, res) => {
     }
 
     // Simpan vote
-    await Vote.create({ userId, sessionId, optionId });
+    await Vote.create({
+      userId,
+      sessionId,
+      optionId: selectedOptionId,
+      pollId,
+    });
 
     req.session.message = { type: "success", text: "Vote berhasil dikirim!" };
     res.redirect(`/poll/${pollId}`);

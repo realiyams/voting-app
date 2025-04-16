@@ -79,10 +79,22 @@ exports.login = async (req, res) => {
 exports.logout = async (req, res) => {
   try {
     res.clearCookie("token");
-    req.session.destroy();
-    res.redirect("/");
+
+    const message = { type: "success", text: "Berhasil logout" };
+
+    req.session.regenerate((err) => {
+      if (err) {
+        console.error("Regenerate error:", err);
+        req.session.message = { type: "danger", text: "Gagal logout" };
+        return res.redirect("/");
+      }
+
+      req.session.message = message;
+      res.redirect("/");
+    });
   } catch (error) {
     req.session.message = { type: "danger", text: "Gagal logout" };
     res.redirect("/");
   }
 };
+

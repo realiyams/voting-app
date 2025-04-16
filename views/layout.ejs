@@ -13,10 +13,18 @@
       <nav class="container mx-auto px-4 py-4">
         <ul class="flex space-x-4 items-center justify-end">
           <li><a href="/" class="text-blue-600 hover:underline">Home</a></li>
-    
+
           <% if (user) { %>
-          <li><a href="/mypolls" class="text-blue-600 hover:underline">My Polls</a></li>
-          <li><a href="/new_poll" class="text-blue-600 hover:underline">New Poll</a></li>
+          <li>
+            <a href="/mypolls" class="text-blue-600 hover:underline"
+              >My Polls</a
+            >
+          </li>
+          <li>
+            <a href="/new_poll" class="text-blue-600 hover:underline"
+              >New Poll</a
+            >
+          </li>
           <li>
             <form action="/auth/logout" method="POST">
               <button
@@ -28,15 +36,25 @@
             </form>
           </li>
           <% } else { %>
-          <li><a href="/login" class="text-blue-600 hover:underline">Login</a></li>
-          <li><a href="/register" class="text-blue-600 hover:underline">Register</a></li>
+          <li>
+            <a href="/login" class="text-blue-600 hover:underline">Login</a>
+          </li>
+          <li>
+            <a href="/register" class="text-blue-600 hover:underline"
+              >Register</a
+            >
+          </li>
           <% } %>
         </ul>
       </nav>
     </header>
 
     <% if (message) { %>
-    <div class="alert alert-<%= message.type %>"><%= message.text %></div>
+    <div
+      class="max-w-2xl mx-auto mt-4 p-4 rounded-lg text-white <%= message.type === 'success' ? 'bg-green-500' : 'bg-red-500' %>"
+    >
+      <%= message.text %>
+    </div>
     <% } %>
 
     <main><%- body %></main>

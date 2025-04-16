@@ -15,7 +15,7 @@
             <em>Dibuat oleh: <%= poll.User?.username || "Tidak diketahui" %></em>
           </p>
 
-          <form action="/vote" method="POST" class="space-y-4">
+          <form action="/vote" method="POST" class="space-y-4" onsubmit="return validateVoteForm(<%= poll.id %>)">
             <div>
               <label class="block text-gray-700 font-medium mb-1">Pilih Opsi:</label>
               <select
@@ -23,7 +23,6 @@
                 id="option-<%= poll.id %>"
                 onchange="clearCustomOption(<%= poll.id %>)"
                 class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
               >
                 <option value="">-- Pilih Opsi --</option>
                 <% poll.Options.forEach(option => { %>
@@ -68,5 +67,17 @@
 
   function clearCustomOption(pollId) {
     document.getElementById("customOption-" + pollId).value = "";
+  }
+
+  function validateVoteForm(pollId) {
+    const option = document.getElementById("option-" + pollId).value;
+    const custom = document.getElementById("customOption-" + pollId).value.trim();
+
+    if (!option && !custom) {
+      alert("Silakan pilih opsi atau masukkan pilihan sendiri.");
+      return false;
+    }
+
+    return true;
   }
 </script>

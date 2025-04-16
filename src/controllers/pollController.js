@@ -69,7 +69,7 @@ exports.myPoll = async (req, res) => {
       });
     });
 
-    res.render("myPoll", { title: "Polling Saya", polls, error: null, message: null });
+    res.render("myPoll", { title: "Polling Saya", polls});
   } catch (error) {
     console.error(error);
     req.session.message = { type: "danger", text: "Gagal mengambil polling Anda." };
@@ -92,7 +92,7 @@ exports.getPollById = async (req, res) => {
       return res.redirect("/");
     }
 
-    res.render("pollDetail", { title: poll.title, poll, error: null, message: null });
+    res.render("pollDetail", { title: poll.title, poll});
   } catch (error) {
     console.error(error);
     req.session.message = { type: "danger", text: "Gagal mengambil polling." };

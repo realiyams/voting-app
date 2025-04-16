@@ -2,6 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 const User = require("./User");
 const Option = require("./Option");
+const Poll = require("./Poll")
 
 const Vote = sequelize.define("Vote", {
   userId: {
@@ -21,6 +22,14 @@ const Vote = sequelize.define("Vote", {
     allowNull: false,
     references: {
       model: Option,
+      key: "id",
+    },
+  },
+  pollId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Poll,
       key: "id",
     },
   },
