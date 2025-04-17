@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 const User = require("./User");
 const Option = require("./Option");
-const Poll = require("./Poll")
+const Poll = require("./Poll");
 
 const Vote = sequelize.define("Vote", {
   userId: {

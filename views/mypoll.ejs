@@ -20,6 +20,8 @@
             <% }) %>
           </ul>
 
+          <canvas id="chart-<%= poll.id %>" width="400" height="200" class="mt-4"></canvas>
+
           <p class="text-sm text-gray-500 mb-2">
             Dibuat pada: <%= new Date(poll.createdAt).toLocaleDateString("id-ID") %>
           </p>
@@ -62,3 +64,49 @@
     </a>
   </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    <% polls.forEach(poll => { %>
+      const ctx<%= poll.id %> = document.getElementById("chart-<%= poll.id %>").getContext("2d");
+
+      new Chart(ctx<%= poll.id %>, {
+        type: 'bar', // bisa juga 'pie'
+        data: {
+          labels: [<%- poll.Options.map(option => `'${option.text}'`).join(", ") %>],
+          datasets: [{
+            label: 'Jumlah Suara',
+            data: [<%- poll.Options.map(option => option.dataValues.voteCount || 0).join(", ") %>],
+
+            backgroundColor: [
+              '#3b82f6',
+              '#10b981',
+              '#f59e0b',
+              '#ef4444',
+              '#8b5cf6',
+              '#ec4899'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: 'Visualisasi Suara'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              precision: 0
+            }
+          }
+        }
+      });
+    <% }) %>
+  });
+</script>
+

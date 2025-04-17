@@ -1,8 +1,47 @@
 const Poll = require("../../models/Poll");
 const Option = require("../../models/Option");
 const Vote = require("../../models/Vote");
+const User = require("../../models/User")
 
 const { Sequelize } = require("sequelize");
+
+// 🔹 Menampilkan semua polling di halaman utama
+exports.getAllPolls = async (req, res) => {
+  try {
+    const polls = await Poll.findAll({
+      include: [
+        {
+          model: Option,
+          include: [
+            {
+              model: Vote,
+              attributes: ['id'] // cukup ambil ID untuk hitung
+            }
+          ]
+        },
+        {
+          model: User,
+          attributes: ["username"]
+        }
+      ]
+    });
+
+    // Hitung jumlah vote per option
+    polls.forEach(poll => {
+      poll.Options.forEach(option => {
+        option.dataValues.voteCount = option.Votes.length;
+      });
+    });
+
+    const message = req.session.message;
+    req.session.message = null;
+
+    res.render("index", { title: "Halaman Utama", message, polls });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Terjadi kesalahan saat mengambil polling.");
+  }
+};
 
 exports.createPoll = async (req, res) => {
   try {
@@ -84,13 +123,23 @@ exports.getPollById = async (req, res) => {
 
     const poll = await Poll.findOne({
       where: { id: pollId },
-      include: [{ model: Option }],
+      include: [
+        {
+          model: Option,
+          include: [{ model: Vote }] // pastikan Vote di-import sebelumnya
+        }
+      ],
     });
-
+    
     if (!poll) {
       req.session.message = { type: "danger", text: "Polling tidak ditemukan." };
       return res.redirect("/");
     }
+    
+    // Hitung jumlah vote per option
+    poll.Options.forEach(option => {
+      option.dataValues.voteCount = option.Votes.length;
+    });
 
     res.render("pollDetail", { title: poll.title, poll});
   } catch (error) {

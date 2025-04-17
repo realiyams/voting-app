@@ -4,45 +4,60 @@
   <h1 class="text-2xl font-bold text-blue-700 mb-6"><%= title %></h1>
 
   <% if (poll.Options && poll.Options.length > 0) { %>
-    <form action="/vote" method="POST" class="space-y-4">
-
-      <p class="font-medium text-gray-800">Pilih salah satu opsi:</p>
-      <% poll.Options.forEach(option => { %>
-        <div class="flex items-center space-x-2">
-          <input
-            type="radio"
-            name="optionId"
-            id="option-<%= option.id %>"
-            value="<%= option.id %>"
-            required
-            class="text-blue-600 focus:ring-blue-500"
-          />
-          <label for="option-<%= option.id %>" class="text-gray-700"><%= option.text %></label>
-        </div>
-      <% }) %>
-
-      <div>
-        <p class="mt-4 text-gray-800">Atau masukkan pilihan sendiri:</p>
-        <input
-          type="text"
-          name="customOption"
-          placeholder="Opsi lainnya..."
-          oninput="clearRadio()"
-          class="w-full border border-gray-300 mt-1 px-3 py-2 rounded focus:outline-none focus:ring focus:border-blue-400"
-        />
-      </div>
-
-      <input type="hidden" name="pollId" value="<%= poll.id %>" />
-
-      <button
-        type="submit"
-        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+  <form action="/vote" method="POST" class="space-y-4">
+    <p class="font-medium text-gray-800">Pilih salah satu opsi:</p>
+    <% poll.Options.forEach(option => { %>
+    <div class="flex items-center space-x-2">
+      <input
+        type="radio"
+        name="optionId"
+        id="option-<%= option.id %>"
+        value="<%= option.id %>"
+        required
+        class="text-blue-600 focus:ring-blue-500"
+      />
+      <label for="option-<%= option.id %>" class="text-gray-700"
+        ><%= option.text %></label
       >
-        Vote
-      </button>
-    </form>
+    </div>
+    <% }) %>
+
+    <div>
+      <p class="mt-4 text-gray-800">Atau masukkan pilihan sendiri:</p>
+      <input
+        type="text"
+        name="customOption"
+        placeholder="Opsi lainnya..."
+        oninput="clearRadio()"
+        class="w-full border border-gray-300 mt-1 px-3 py-2 rounded focus:outline-none focus:ring focus:border-blue-400"
+      />
+    </div>
+
+    <input type="hidden" name="pollId" value="<%= poll.id %>" />
+
+    <button
+      type="submit"
+      class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+    >
+      Vote
+    </button>
+  </form>
+
+  <div class="mt-6">
+    <button
+      onclick="toggleChart()"
+      class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+    >
+      📊 Lihat Grafik Hasil
+    </button>
+
+    <div id="chartContainer" class="mt-4 hidden">
+      <canvas id="pollChart" width="400" height="300"></canvas>
+    </div>
+  </div>
+
   <% } else { %>
-    <p class="text-red-600 font-semibold">Tidak ada opsi untuk polling ini.</p>
+  <p class="text-red-600 font-semibold">Tidak ada opsi untuk polling ini.</p>
   <% } %>
 
   <div class="mt-6 text-center">
@@ -54,5 +69,38 @@
   function clearRadio() {
     const radios = document.querySelectorAll('input[type="radio"]');
     radios.forEach(r => r.checked = false);
+  }
+
+  function toggleChart() {
+    const container = document.getElementById("chartContainer");
+    container.classList.toggle("hidden");
+
+    if (!window.chartInitialized) {
+      const ctx = document.getElementById("pollChart").getContext("2d");
+
+      const chart = new Chart(ctx, {
+        type: "bar", // Bisa ganti ke 'pie' kalau mau
+        data: {
+          labels: [<%- poll.Options.map(option => `'${option.text}'`).join(", ") %>],
+          datasets: [{
+            label: 'Jumlah Suara',
+            data: [<%- poll.Options.map(option => option.dataValues.voteCount || 0).join(", ") %>],
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      window.chartInitialized = true; // Supaya tidak dibuat ulang
+    }
   }
 </script>
