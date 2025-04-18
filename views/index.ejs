@@ -1,9 +1,9 @@
 <% layout('layout') %>
 
 <div class="max-w-3xl mx-auto mt-10 p-4">
-  <h1 class="text-3xl font-bold mb-4 text-center">Selamat Datang!</h1>
+  <h1 class="text-3xl font-bold mb-4 text-center">Welcome!</h1>
   <p class="text-center text-gray-700 mb-6">
-    Silakan pilih opsi voting Anda atau tambahkan opsi sendiri.
+    Please select your voting option or add your own.
   </p>
 
   <% if (polls.length > 0) { %>
@@ -12,19 +12,19 @@
         <div class="bg-white shadow-md rounded-lg p-6">
           <h3 class="text-xl font-semibold mb-2"><%= poll.title %></h3>
           <p class="text-sm text-gray-500 mb-4">
-            <em>Dibuat oleh: <%= poll.User?.username || "Tidak diketahui" %></em>
+            <em>Created by: <%= poll.User?.username || "Unknown" %></em>
           </p>
 
           <form action="/vote" method="POST" class="space-y-4" onsubmit="return validateVoteForm(<%= poll.id %>)">
             <div>
-              <label class="block text-gray-700 font-medium mb-1">Pilih Opsi:</label>
+              <label class="block text-gray-700 font-medium mb-1">Choose an Option:</label>
               <select
                 name="optionId"
                 id="option-<%= poll.id %>"
                 onchange="clearCustomOption(<%= poll.id %>)"
                 class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">-- Pilih Opsi --</option>
+                <option value="">-- Select Option --</option>
                 <% poll.Options.forEach(option => { %>
                   <option value="<%= option.id %>"><%= option.text %></option>
                 <% }) %>
@@ -32,13 +32,13 @@
             </div>
 
             <div>
-              <label class="block text-gray-700 font-medium mb-1">Atau masukkan pilihan sendiri:</label>
+              <label class="block text-gray-700 font-medium mb-1">Or enter your own option:</label>
               <input
                 type="text"
                 name="customOption"
                 id="customOption-<%= poll.id %>"
                 oninput="clearSelect(<%= poll.id %>)"
-                placeholder="Masukkan opsi sendiri..."
+                placeholder="Enter your own option..."
                 class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -58,7 +58,7 @@
               onclick="toggleChart()"
               class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
             >
-              📊 Lihat Grafik Hasil
+              📊 View Chart Results
             </button>
         
             <div id="chartContainer" class="mt-4 hidden">
@@ -75,11 +75,11 @@
                 const ctx = document.getElementById("pollChart").getContext("2d");
             
                 new Chart(ctx, {
-                  type: "bar", // atau 'pie'
+                  type: "bar",
                   data: {
                     labels: [<%- poll.Options.map(option => `'${option.text}'`).join(", ") %>],
                     datasets: [{
-                      label: 'Jumlah Suara',
+                      label: 'Vote Count',
                       data: [<%- poll.Options.map(option => option.dataValues.voteCount || 0).join(", ") %>],
                       backgroundColor: [
                         '#3b82f6',
@@ -98,7 +98,7 @@
                       legend: { display: false },
                       title: {
                         display: true,
-                        text: 'Visualisasi Suara'
+                        text: 'Vote Visualization'
                       }
                     },
                     scales: {
@@ -113,13 +113,12 @@
                 window.chartInitialized = true;
               }
             }
-          
           </script>
         </div>
       <% }) %>
     </div>
   <% } else { %>
-    <p class="text-center text-gray-600">Tidak ada polling yang tersedia.</p>
+    <p class="text-center text-gray-600">No polls available.</p>
   <% } %>
 </div>
 
@@ -137,7 +136,7 @@
     const custom = document.getElementById("customOption-" + pollId).value.trim();
 
     if (!option && !custom) {
-      alert("Silakan pilih opsi atau masukkan pilihan sendiri.");
+      alert("Please select an option or enter your own.");
       return false;
     }
 

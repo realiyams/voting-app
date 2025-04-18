@@ -1,7 +1,7 @@
 const Poll = require("../../models/Poll");
 const Option = require("../../models/Option");
 const Vote = require("../../models/Vote");
-const User = require("../../models/User")
+const User = require("../../models/User");
 
 exports.getAllPolls = async (req, res) => {
   try {
@@ -36,10 +36,10 @@ exports.getAllPolls = async (req, res) => {
     const message = req.session.message;
     req.session.message = null;
 
-    res.render("index", { title: "Halaman Utama", message, polls });
+    res.render("index", { title: "Home Page", message, polls });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Terjadi kesalahan saat mengambil polling.");
+    res.status(500).send("An error occurred while retrieving polls.");
   }
 };
 
@@ -48,16 +48,16 @@ exports.createPoll = async (req, res) => {
     const { title, options } = req.body;
 
     if (!title || !options) {
-      req.session.message = { type: "danger", text: "Semua field harus diisi!" };
-      console.log("Semua field harus diisi!");
+      req.session.message = { type: "danger", text: "All fields must be filled!" };
+      console.log("All fields must be filled!");
       return res.redirect("/new_poll");
     }
 
     const optionsArray = options.split(",").map(option => option.trim());
 
     if (optionsArray.length < 2) {
-      req.session.message = { type: "danger", text: "Minimal harus ada 2 pilihan!" };
-      console.log("Minimal harus ada 2 pilihan!");
+      req.session.message = { type: "danger", text: "There must be at least 2 options!" };
+      console.log("There must be at least 2 options!");
       return res.redirect("/new_poll");
     }
 
@@ -69,12 +69,12 @@ exports.createPoll = async (req, res) => {
     const optionPromises = optionsArray.map(text => Option.create({ text, pollId: poll.id }));
     await Promise.all(optionPromises);
 
-    req.session.message = { type: "success", text: "Polling berhasil dibuat!" };
-    console.log("Polling berhasil dibuat!");
+    req.session.message = { type: "success", text: "Poll successfully created!" };
+    console.log("Poll successfully created!");
     res.redirect("/");
   } catch (error) {
     console.error(error);
-    req.session.message = { type: "danger", text: "Gagal membuat polling." };
+    req.session.message = { type: "danger", text: "Failed to create poll." };
     res.redirect("/new_poll");
   }
 };
@@ -108,10 +108,10 @@ exports.myPoll = async (req, res) => {
       });
     });
 
-    res.render("myPoll", { title: "Polling Saya", polls });
+    res.render("myPoll", { title: "My Polls", polls });
   } catch (error) {
     console.error(error);
-    req.session.message = { type: "danger", text: "Gagal mengambil polling Anda." };
+    req.session.message = { type: "danger", text: "Failed to retrieve your polls." };
     res.redirect("/");
   }
 };
@@ -132,7 +132,7 @@ exports.getPollById = async (req, res) => {
     });
 
     if (!poll) {
-      req.session.message = { type: "danger", text: "Polling tidak ditemukan." };
+      req.session.message = { type: "danger", text: "Poll not found." };
       return res.redirect("/");
     }
 
@@ -143,7 +143,7 @@ exports.getPollById = async (req, res) => {
     res.render("pollDetail", { title: poll.title, poll });
   } catch (error) {
     console.error(error);
-    req.session.message = { type: "danger", text: "Gagal mengambil polling." };
+    req.session.message = { type: "danger", text: "Failed to retrieve poll." };
     res.redirect("/");
   }
 };
@@ -153,12 +153,11 @@ exports.deletePoll = async (req, res) => {
 
   try {
     await Option.destroy({ where: { pollId } });
-
     await Poll.destroy({ where: { id: pollId } });
 
     req.session.message = {
       type: 'success',
-      text: 'Polling berhasil dihapus.'
+      text: 'Poll successfully deleted.'
     };
 
     res.redirect('/mypolls');
@@ -166,10 +165,9 @@ exports.deletePoll = async (req, res) => {
     console.error(error);
     req.session.message = {
       type: 'danger',
-      text: 'Gagal menghapus polling.'
+      text: 'Failed to delete poll.'
     };
 
     res.redirect('/mypolls');
   }
 };
-

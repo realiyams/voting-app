@@ -5,7 +5,7 @@
 
   <% if (poll.Options && poll.Options.length > 0) { %>
   <form action="/vote" method="POST" class="space-y-4">
-    <p class="font-medium text-gray-800">Pilih salah satu opsi:</p>
+    <p class="font-medium text-gray-800">Choose one option:</p>
     <% poll.Options.forEach(option => { %>
     <div class="flex items-center space-x-2">
       <input
@@ -23,11 +23,11 @@
     <% }) %>
 
     <div>
-      <p class="mt-4 text-gray-800">Atau masukkan pilihan sendiri:</p>
+      <p class="mt-4 text-gray-800">Or enter your own option:</p>
       <input
         type="text"
         name="customOption"
-        placeholder="Opsi lainnya..."
+        placeholder="Other option..."
         oninput="clearRadio()"
         class="w-full border border-gray-300 mt-1 px-3 py-2 rounded focus:outline-none focus:ring focus:border-blue-400"
       />
@@ -48,7 +48,7 @@
       onclick="toggleChart()"
       class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
     >
-      📊 Lihat Grafik Hasil
+      📊 View Results Chart
     </button>
 
     <div id="chartContainer" class="mt-4 hidden">
@@ -57,11 +57,11 @@
   </div>
 
   <% } else { %>
-  <p class="text-red-600 font-semibold">Tidak ada opsi untuk polling ini.</p>
+  <p class="text-red-600 font-semibold">There are no options for this poll.</p>
   <% } %>
 
   <div class="mt-6 text-center">
-    <a href="/" class="text-blue-600 hover:underline">⬅ Kembali ke Beranda</a>
+    <a href="/" class="text-blue-600 hover:underline">⬅ Back to Home</a>
   </div>
 </div>
 
@@ -79,11 +79,11 @@
       const ctx = document.getElementById("pollChart").getContext("2d");
   
       new Chart(ctx, {
-        type: "bar", // atau 'pie'
+        type: "bar", // or 'pie'
         data: {
           labels: [<%- poll.Options.map(option => `'${option.text}'`).join(", ") %>],
           datasets: [{
-            label: 'Jumlah Suara',
+            label: 'Number of Votes',
             data: [<%- poll.Options.map(option => option.dataValues.voteCount || 0).join(", ") %>],
             backgroundColor: [
               '#3b82f6',
@@ -102,7 +102,7 @@
             legend: { display: false },
             title: {
               display: true,
-              text: 'Visualisasi Suara'
+              text: 'Vote Visualization'
             }
           },
           scales: {

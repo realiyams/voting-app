@@ -1,11 +1,11 @@
 <% layout('layout') %>
 
 <div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-  <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">Buat Polling Baru</h1>
+  <h1 class="text-2xl font-bold mb-6 text-center text-blue-700">Create a New Poll</h1>
 
   <form action="/new_poll" method="POST" class="space-y-4">
     <div>
-      <label for="title" class="block text-gray-700 font-medium">Pertanyaan:</label>
+      <label for="title" class="block text-gray-700 font-medium">Question:</label>
       <input
         type="text"
         id="title"
@@ -16,13 +16,13 @@
     </div>
 
     <div>
-      <label for="options" class="block text-gray-700 font-medium">Pilihan (pisahkan dengan koma):</label>
+      <label for="options" class="block text-gray-700 font-medium">Options (separated by commas):</label>
       <input
         type="text"
         id="options"
         name="options"
         required
-        placeholder="Contoh: Ya, Tidak, Mungkin"
+        placeholder="Example: Yes, No, Maybe"
         class="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-400"
       />
     </div>
@@ -31,7 +31,7 @@
       type="submit"
       class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
     >
-      Buat Polling
+      Create Poll
     </button>
   </form>
 
@@ -40,7 +40,7 @@
       href="/"
       class="text-blue-600 hover:underline"
     >
-      ⬅ Kembali ke Beranda
+      ⬅ Back to Home
     </a>
   </div>
 </div>

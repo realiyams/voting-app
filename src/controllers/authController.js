@@ -10,7 +10,7 @@ exports.register = async (req, res) => {
 
     const existingUser = await User.findOne({ where: { username } });
     if (existingUser) {
-      req.session.message = { type: "danger", text: "Username sudah dipakai" };
+      req.session.message = { type: "danger", text: "Username is already taken" };
       return res.redirect("/register");
     }
 
@@ -18,13 +18,13 @@ exports.register = async (req, res) => {
 
     req.session.message = {
       type: "success",
-      text: "User berhasil dibuat, silakan login!",
+      text: "User successfully created, please log in!",
     };
     res.redirect("/login");
   } catch (error) {
     req.session.message = {
       type: "danger",
-      text: "Terjadi kesalahan, coba lagi!",
+      text: "An error occurred, please try again!",
     };
     res.redirect("/register");
   }
@@ -38,7 +38,7 @@ exports.login = async (req, res) => {
     if (!user) {
       req.session.message = {
         type: "danger",
-        text: "Username atau password salah",
+        text: "Incorrect username or password",
       };
       return res.redirect("/login");
     }
@@ -47,7 +47,7 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       req.session.message = {
         type: "danger",
-        text: "Username atau password salah",
+        text: "Incorrect username or password",
       };
       return res.redirect("/login");
     }
@@ -65,12 +65,12 @@ exports.login = async (req, res) => {
     });
 
     req.session.user = { id: user.id, username: user.username };
-    req.session.message = { type: "success", text: "Login berhasil!" };
+    req.session.message = { type: "success", text: "Login successful!" };
     res.redirect("/");
   } catch (error) {
     req.session.message = {
       type: "danger",
-      text: "Terjadi kesalahan, coba lagi!",
+      text: "An error occurred, please try again!",
     };
     res.redirect("/login");
   }
@@ -80,12 +80,12 @@ exports.logout = async (req, res) => {
   try {
     res.clearCookie("token");
 
-    const message = { type: "success", text: "Berhasil logout" };
+    const message = { type: "success", text: "Logged out successfully" };
 
     req.session.regenerate((err) => {
       if (err) {
         console.error("Regenerate error:", err);
-        req.session.message = { type: "danger", text: "Gagal logout" };
+        req.session.message = { type: "danger", text: "Failed to log out" };
         return res.redirect("/");
       }
 
@@ -93,8 +93,7 @@ exports.logout = async (req, res) => {
       res.redirect("/");
     });
   } catch (error) {
-    req.session.message = { type: "danger", text: "Gagal logout" };
+    req.session.message = { type: "danger", text: "Failed to log out" };
     res.redirect("/");
   }
 };
-

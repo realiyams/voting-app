@@ -9,7 +9,7 @@ exports.castVote = async (req, res) => {
     const sessionId = req.session.id;
 
     if (!pollId) {
-      req.session.message = { type: "danger", text: "Polling tidak ditemukan." };
+      req.session.message = { type: "danger", text: "Poll not found." };
       return res.redirect("/");
     }
 
@@ -19,7 +19,7 @@ exports.castVote = async (req, res) => {
       if (!userId) {
         req.session.message = {
           type: "danger",
-          text: "Anda harus login untuk menambahkan opsi baru."
+          text: "You must be logged in to add a new option."
         };
         return res.redirect(`/poll/${pollId}`);
       }
@@ -35,13 +35,13 @@ exports.castVote = async (req, res) => {
       });
 
       if (!option) {
-        req.session.message = { type: "danger", text: "Pilihan tidak valid." };
+        req.session.message = { type: "danger", text: "Invalid option." };
         return res.redirect(`/poll/${pollId}`);
       }
 
       selectedOptionId = option.id;
     } else {
-      req.session.message = { type: "danger", text: "Silakan pilih atau masukkan opsi." };
+      req.session.message = { type: "danger", text: "Please select or enter an option." };
       return res.redirect(`/poll/${pollId}`);
     }
 
@@ -52,7 +52,7 @@ exports.castVote = async (req, res) => {
     });
 
     if (existingVote) {
-      req.session.message = { type: "danger", text: "Anda sudah memberikan suara!" };
+      req.session.message = { type: "danger", text: "You have already voted!" };
       return res.redirect(`/poll/${pollId}`);
     }
 
@@ -63,16 +63,16 @@ exports.castVote = async (req, res) => {
       pollId,
     });
 
-    req.session.message = { type: "success", text: "Vote berhasil dikirim!" };
+    req.session.message = { type: "success", text: "Vote successfully submitted!" };
     res.redirect(`/poll/${pollId}`);
   } catch (error) {
     console.error(error);
-    req.session.message = { type: "danger", text: "Gagal melakukan vote." };
+    req.session.message = { type: "danger", text: "Failed to submit vote." };
     res.redirect("/");
   }
 };
 
-// unused controller
+// Unused controller
 
 // exports.getPollResults = async (req, res) => {
 //   try {
@@ -84,14 +84,14 @@ exports.castVote = async (req, res) => {
 //     });
 
 //     if (!poll) {
-//       req.session.message = { type: "danger", text: "Polling tidak ditemukan." };
+//       req.session.message = { type: "danger", text: "Poll not found." };
 //       return res.redirect("/");
 //     }
 
-//     res.render("pollResults", { title: `Hasil Polling: ${poll.title}`, poll });
+//     res.render("pollResults", { title: `Poll Results: ${poll.title}`, poll });
 //   } catch (error) {
 //     console.error(error);
-//     req.session.message = { type: "danger", text: "Gagal mengambil hasil polling." };
+//     req.session.message = { type: "danger", text: "Failed to fetch poll results." };
 //     res.redirect("/");
 //   }
 // };
