@@ -52,6 +52,69 @@
               Vote
             </button>
           </form>
+
+          <div class="mt-6">
+            <button
+              onclick="toggleChart()"
+              class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+            >
+              📊 Lihat Grafik Hasil
+            </button>
+        
+            <div id="chartContainer" class="mt-4 hidden">
+              <canvas id="pollChart" width="400" height="300"></canvas>
+            </div>
+          </div>
+
+          <script>
+            function toggleChart() {
+              const container = document.getElementById("chartContainer");
+              container.classList.toggle("hidden");
+            
+              if (!window.chartInitialized) {
+                const ctx = document.getElementById("pollChart").getContext("2d");
+            
+                new Chart(ctx, {
+                  type: "bar", // atau 'pie'
+                  data: {
+                    labels: [<%- poll.Options.map(option => `'${option.text}'`).join(", ") %>],
+                    datasets: [{
+                      label: 'Jumlah Suara',
+                      data: [<%- poll.Options.map(option => option.dataValues.voteCount || 0).join(", ") %>],
+                      backgroundColor: [
+                        '#3b82f6',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444',
+                        '#8b5cf6',
+                        '#ec4899'
+                      ],
+                      borderWidth: 1
+                    }]
+                  },
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: { display: false },
+                      title: {
+                        display: true,
+                        text: 'Visualisasi Suara'
+                      }
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        precision: 0
+                      }
+                    }
+                  }
+                });
+            
+                window.chartInitialized = true;
+              }
+            }
+          
+          </script>
         </div>
       <% }) %>
     </div>

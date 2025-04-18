@@ -15,15 +15,21 @@ exports.castVote = async (req, res) => {
 
     let selectedOptionId;
 
-    // Jika user mengisi customOption
     if (customOption && customOption.trim() !== "") {
+      if (!userId) {
+        req.session.message = {
+          type: "danger",
+          text: "Anda harus login untuk menambahkan opsi baru."
+        };
+        return res.redirect(`/poll/${pollId}`);
+      }
+
       const newOption = await Option.create({
         text: customOption.trim(),
         pollId,
       });
       selectedOptionId = newOption.id;
     } else if (optionId) {
-      // Validasi apakah optionId valid untuk polling ini
       const option = await Option.findOne({
         where: { id: optionId, pollId },
       });
@@ -39,7 +45,6 @@ exports.castVote = async (req, res) => {
       return res.redirect(`/poll/${pollId}`);
     }
 
-    // Cek apakah user/session sudah pernah vote untuk polling ini
     const existingVote = await Vote.findOne({
       where: userId
         ? { userId, pollId }
@@ -51,7 +56,6 @@ exports.castVote = async (req, res) => {
       return res.redirect(`/poll/${pollId}`);
     }
 
-    // Simpan vote
     await Vote.create({
       userId,
       sessionId,
@@ -68,25 +72,26 @@ exports.castVote = async (req, res) => {
   }
 };
 
-// 🔹 Menampilkan hasil vote untuk sebuah polling
-exports.getPollResults = async (req, res) => {
-  try {
-    const pollId = req.params.id;
+// unused controller
 
-    const poll = await Poll.findOne({
-      where: { id: pollId },
-      include: [{ model: Option, include: [Vote] }],
-    });
+// exports.getPollResults = async (req, res) => {
+//   try {
+//     const pollId = req.params.id;
 
-    if (!poll) {
-      req.session.message = { type: "danger", text: "Polling tidak ditemukan." };
-      return res.redirect("/");
-    }
+//     const poll = await Poll.findOne({
+//       where: { id: pollId },
+//       include: [{ model: Option, include: [Vote] }],
+//     });
 
-    res.render("pollResults", { title: `Hasil Polling: ${poll.title}`, poll });
-  } catch (error) {
-    console.error(error);
-    req.session.message = { type: "danger", text: "Gagal mengambil hasil polling." };
-    res.redirect("/");
-  }
-};
+//     if (!poll) {
+//       req.session.message = { type: "danger", text: "Polling tidak ditemukan." };
+//       return res.redirect("/");
+//     }
+
+//     res.render("pollResults", { title: `Hasil Polling: ${poll.title}`, poll });
+//   } catch (error) {
+//     console.error(error);
+//     req.session.message = { type: "danger", text: "Gagal mengambil hasil polling." };
+//     res.redirect("/");
+//   }
+// };

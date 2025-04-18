@@ -3,9 +3,6 @@ const Option = require("../../models/Option");
 const Vote = require("../../models/Vote");
 const User = require("../../models/User")
 
-const { Sequelize } = require("sequelize");
-
-// 🔹 Menampilkan semua polling di halaman utama
 exports.getAllPolls = async (req, res) => {
   try {
     const polls = await Poll.findAll({
@@ -15,7 +12,7 @@ exports.getAllPolls = async (req, res) => {
           include: [
             {
               model: Vote,
-              attributes: ['id'] // cukup ambil ID untuk hitung
+              attributes: ['id']
             }
           ]
         },
@@ -23,10 +20,13 @@ exports.getAllPolls = async (req, res) => {
           model: User,
           attributes: ["username"]
         }
+      ],
+      order: [
+        ['createdAt', 'DESC'],
+        [Option, 'id', 'ASC']
       ]
     });
 
-    // Hitung jumlah vote per option
     polls.forEach(poll => {
       poll.Options.forEach(option => {
         option.dataValues.voteCount = option.Votes.length;
@@ -47,7 +47,6 @@ exports.createPoll = async (req, res) => {
   try {
     const { title, options } = req.body;
 
-    // Validasi input
     if (!title || !options) {
       req.session.message = { type: "danger", text: "Semua field harus diisi!" };
       console.log("Semua field harus diisi!");
@@ -80,7 +79,6 @@ exports.createPoll = async (req, res) => {
   }
 };
 
-// 🔹 Menampilkan polling yang dibuat oleh user yang sedang login
 exports.myPoll = async (req, res) => {
   try {
     const userId = req.session.user.id;
@@ -93,22 +91,24 @@ exports.myPoll = async (req, res) => {
           include: [
             {
               model: Vote,
-              attributes: ['id'], // Ambil id untuk hitung jumlah
+              attributes: ['id'],
             }
           ]
         }
       ],
-      order: [['createdAt', 'DESC']]
+      order: [
+        ['createdAt', 'DESC'],
+        [Option, 'id', 'ASC']
+      ]
     });
 
-    // Hitung jumlah vote per option
     polls.forEach(poll => {
       poll.Options.forEach(option => {
         option.dataValues.voteCount = option.Votes.length;
       });
     });
 
-    res.render("myPoll", { title: "Polling Saya", polls});
+    res.render("myPoll", { title: "Polling Saya", polls });
   } catch (error) {
     console.error(error);
     req.session.message = { type: "danger", text: "Gagal mengambil polling Anda." };
@@ -116,7 +116,6 @@ exports.myPoll = async (req, res) => {
   }
 };
 
-// 🔹 Menampilkan polling berdasarkan ID
 exports.getPollById = async (req, res) => {
   try {
     const pollId = req.params.id;
@@ -126,22 +125,22 @@ exports.getPollById = async (req, res) => {
       include: [
         {
           model: Option,
-          include: [{ model: Vote }] // pastikan Vote di-import sebelumnya
+          include: [{ model: Vote }]
         }
       ],
+      order: [[Option, 'id', 'ASC']]
     });
-    
+
     if (!poll) {
       req.session.message = { type: "danger", text: "Polling tidak ditemukan." };
       return res.redirect("/");
     }
-    
-    // Hitung jumlah vote per option
+
     poll.Options.forEach(option => {
       option.dataValues.voteCount = option.Votes.length;
     });
 
-    res.render("pollDetail", { title: poll.title, poll});
+    res.render("pollDetail", { title: poll.title, poll });
   } catch (error) {
     console.error(error);
     req.session.message = { type: "danger", text: "Gagal mengambil polling." };
@@ -149,15 +148,12 @@ exports.getPollById = async (req, res) => {
   }
 };
 
-// 🔹 Menghapus polling berdasarkan ID
 exports.deletePoll = async (req, res) => {
   const pollId = req.params.id;
 
   try {
-    // Hapus semua opsi terkait terlebih dahulu
     await Option.destroy({ where: { pollId } });
 
-    // Hapus polling-nya
     await Poll.destroy({ where: { id: pollId } });
 
     req.session.message = {

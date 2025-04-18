@@ -11,7 +11,7 @@ require("dotenv").config();
 
 const routes = require("./src/routes/web");
 const authRoutes = require("./src/routes/auth");
-const protectedRoutes = require("./src/routes/protected");
+// const protectedRoutes = require("./src/routes/protected");
 
 const app = express();
 
@@ -55,7 +55,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", routes);
 app.use("/auth", authRoutes);
-app.use("/protected", protectedRoutes);
+// app.use("/protected", protectedRoutes);
 
 app.get("/test-db", async (req, res) => {
   try {

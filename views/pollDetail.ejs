@@ -74,33 +74,47 @@
   function toggleChart() {
     const container = document.getElementById("chartContainer");
     container.classList.toggle("hidden");
-
+  
     if (!window.chartInitialized) {
       const ctx = document.getElementById("pollChart").getContext("2d");
-
-      const chart = new Chart(ctx, {
-        type: "bar", // Bisa ganti ke 'pie' kalau mau
+  
+      new Chart(ctx, {
+        type: "bar", // atau 'pie'
         data: {
           labels: [<%- poll.Options.map(option => `'${option.text}'`).join(", ") %>],
           datasets: [{
             label: 'Jumlah Suara',
             data: [<%- poll.Options.map(option => option.dataValues.voteCount || 0).join(", ") %>],
-            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-            borderColor: 'rgba(54, 162, 235, 1)',
+            backgroundColor: [
+              '#3b82f6',
+              '#10b981',
+              '#f59e0b',
+              '#ef4444',
+              '#8b5cf6',
+              '#ec4899'
+            ],
             borderWidth: 1
           }]
         },
         options: {
           responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: 'Visualisasi Suara'
+            }
+          },
           scales: {
             y: {
-              beginAtZero: true
+              beginAtZero: true,
+              precision: 0
             }
           }
         }
       });
-
-      window.chartInitialized = true; // Supaya tidak dibuat ulang
+  
+      window.chartInitialized = true;
     }
   }
 </script>
